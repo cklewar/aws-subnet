@@ -1,26 +1,3 @@
-# AWS-SUBNET
-
-This repository consists of Terraform templates to bring up a AWS VPC with subnets.
-
-## Usage
-
-- Clone this repo with: `git clone --recurse-submodules https://github.com/cklewar/aws-subnet`
-- Enter repository directory with: `cd aws-subnet`
-- Export AWS `access_key` and `aws_secrect_key` environment variables
-- Pick and choose from below examples and add mandatory input data and copy data into file `main.tf.example`
-- Rename file __main.tf.example__ to __main.tf__ with: `rename main.tf.example main.tf`
-- Initialize with: `terraform init`
-- Apply with: `terraform apply -auto-approve` or destroy with: `terraform destroy -auto-approve`
-
-### Example Output
-
-```bash
-
-```
-
-## AWS VPC with subnets
-
-````hcl
 module "aws_vpc" {
   source             = "./modules/aws/vpc"
   aws_az_name        = "us-east-1a"
@@ -58,7 +35,7 @@ variable "aws_vpc_subnets" {
 
 provider "aws" {
   region = "us-west-2"
-  alias = "default"
+  alias  = "default"
 }
 
 module "aws_subnet" {
@@ -69,7 +46,7 @@ module "aws_subnet" {
   aws_vpc_id                      = module.aws_vpc.aws_vpc_id
   aws_vpc_map_public_ip_on_launch = each.value.map_public_ip_on_launch
   subnet_cidr_block               = each.value.cidr_block
-  
+  aws_vpc_subnets                 = []
   custom_tags                     = {
     Name  = "my_vpc"
     Owner = "c.klewar@f5.com"
@@ -78,6 +55,5 @@ module "aws_subnet" {
   providers = {
     aws = aws.default
   }
-}
-````
 
+}
