@@ -1,6 +1,6 @@
 # AWS-SUBNET
 
-This repository consists of Terraform templates to bring up a AWS VPC with subnets.
+This repository consists of Terraform templates to bring up a AWS Subnet attached to VPC.
 
 ## Usage
 
