@@ -60,3 +60,16 @@ module "aws_subnet" {
     aws = aws.us-east-2
   }
 }
+
+output "aws_subnets" {
+  value = {
+    format("%s-aws-subnet-a-%s", var.project_prefix, var.project_suffix) = {
+      "id"     = module.aws_subnet.aws_subnets[format("%s-aws-subnet-a-%s", var.project_prefix, var.project_suffix)]["id"]
+      "vpc_id" = module.aws_subnet.aws_subnets[format("%s-aws-subnet-a-%s", var.project_prefix, var.project_suffix)]["vpc_id"]
+    }
+    format("%s-aws-subnet-b-%s", var.project_prefix, var.project_suffix) = {
+      "id"     = module.aws_subnet.aws_subnets[format("%s-aws-subnet-b-%s", var.project_prefix, var.project_suffix)]["id"]
+      "vpc_id" = module.aws_subnet.aws_subnets[format("%s-aws-subnet-b-%s", var.project_prefix, var.project_suffix)]["vpc_id"]
+    }
+  }
+}
