@@ -21,63 +21,66 @@ This repository consists of Terraform templates to bring up a AWS Subnet attache
 ## AWS VPC with subnets
 
 ````hcl
+variable "project_prefix" {
+  type        = string
+  description = "prefix string put in front of string"
+  default     = "f5xc"
+}
+
+variable "project_suffix" {
+  type        = string
+  description = "prefix string put at the end of string"
+  default     = "01"
+}
+
 module "aws_vpc" {
   source             = "./modules/aws/vpc"
-  aws_az_name        = "us-east-1a"
-  aws_region         = "us-east-1"
-  aws_vpc_cidr_block = "192.168.0.0/16"
-  aws_vpc_name       = "myVPC"
+  aws_az_name        = "us-east-2a"
+  aws_region         = "us-east-2"
+  aws_vpc_cidr_block = "172.16.40.0/21"
+  aws_vpc_name       = format("%s-aws-vpc-%s", var.project_prefix, var.project_suffix)
   custom_tags        = {
-    Name  = "my_vpc"
+    Name  = format("%s-aws-vpc-%s", var.project_prefix, var.project_suffix)
     Owner = "c.klewar@f5.com"
   }
 }
 
-variable "aws_vpc_subnets" {
-  type = list(object({
-    name                    = string
-    map_public_ip_on_launch = bool
-    cidr_block              = string
-    availability_zone       = string
-  }))
-  default = [
-    {
-      name                    = "my_subnet_A"
-      map_public_ip_on_launch = true
-      cidr_block              = "192.168.0.0/24"
-      availability_zone       = "us-west-2a"
-    },
-    {
-      name                    = "my_subnetB"
-      map_public_ip_on_launch = true
-      cidr_block              = "192.169.0.0/24"
-      availability_zone       = "us-west-2a"
-    }
-  ]
-}
-
 provider "aws" {
-  region = "us-west-2"
-  alias = "default"
+  region = "us-east-2"
+  alias  = "us-east-2"
 }
 
 module "aws_subnet" {
-  for_each                        = {for k, v in var.aws_vpc_subnets :  k => v}
-  source                          = "./modules/aws/subnet"
-  aws_az_name                     = each.value.availability_zone
-  aws_subnet_name                 = each.value.name
-  aws_vpc_id                      = module.aws_vpc.aws_vpc_id
-  aws_vpc_map_public_ip_on_launch = each.value.map_public_ip_on_launch
-  subnet_cidr_block               = each.value.cidr_block
-  
-  custom_tags                     = {
-    Name  = "my_vpc"
+  source          = "./modules/aws/subnet"
+  aws_vpc_id      = module.aws_vpc.aws_vpc["id"]
+  aws_vpc_subnets = [
+    {
+      name                    = format("%s-aws-subnet-a-%s", var.project_prefix, var.project_suffix)
+      map_public_ip_on_launch = true
+      cidr_block              = "172.16.40.0/24"
+      availability_zone       = "us-west-2a"
+      custom_tags             = {
+        Name  = format("%s-aws-subnet-a-%s", var.project_prefix, var.project_suffix)
+        Owner = "c.klewar@f5.com"
+      }
+    },
+    {
+      name                    = format("%s-aws-subnet-b-%s", var.project_prefix, var.project_suffix)
+      map_public_ip_on_launch = true
+      cidr_block              = "172.16.41.0/24"
+      availability_zone       = "us-west-2a"
+      custom_tags             = {
+        Name  = format("%s-aws-subnet-b-%s", var.project_prefix, var.project_suffix)
+        Owner = "c.klewar@f5.com"
+      }
+    }
+  ]
+  custom_tags = {
     Owner = "c.klewar@f5.com"
   }
 
   providers = {
-    aws = aws.default
+    aws = aws.us-east-2
   }
-}
-````
+}````
 
