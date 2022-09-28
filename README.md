@@ -12,15 +12,9 @@ This repository consists of Terraform templates to bring up a AWS Subnet attache
 - Initialize with: `terraform init`
 - Apply with: `terraform apply -auto-approve` or destroy with: `terraform destroy -auto-approve`
 
-### Example Output
-
-```bash
-
-```
-
 ## AWS VPC with subnets
 
-````hcl
+```hcl
 variable "project_prefix" {
   type        = string
   description = "prefix string put in front of string"
@@ -82,5 +76,6 @@ module "aws_subnet" {
   providers = {
     aws = aws.us-east-2
   }
-}````
+}
+```
 
