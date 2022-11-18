@@ -50,28 +50,27 @@ module "aws_subnet" {
   aws_vpc_subnets = [
     {
       name                    = format("%s-aws-subnet-a-%s", var.project_prefix, var.project_suffix)
+      owner                   = var.owner
       map_public_ip_on_launch = true
       cidr_block              = "172.16.40.0/24"
-      availability_zone       = "us-west-2a"
+      availability_zone       = "us-east-2a"
       custom_tags             = {
-        Name  = format("%s-aws-subnet-a-%s", var.project_prefix, var.project_suffix)
-        Owner = "c.klewar@f5.com"
+        f5-xc-tenant  = "playground"
+        f5-xc-feature = "aws-subnet"
       }
     },
     {
       name                    = format("%s-aws-subnet-b-%s", var.project_prefix, var.project_suffix)
+      owner                   = var.owner
       map_public_ip_on_launch = true
       cidr_block              = "172.16.41.0/24"
-      availability_zone       = "us-west-2a"
+      availability_zone       = "us-east-2a"
       custom_tags             = {
-        Name  = format("%s-aws-subnet-b-%s", var.project_prefix, var.project_suffix)
-        Owner = "c.klewar@f5.com"
+        f5-xc-tenant  = "playground"
+        f5-xc-feature = "aws-subnet"
       }
     }
   ]
-  custom_tags = {
-    Owner = "c.klewar@f5.com"
-  }
 
   providers = {
     aws = aws.us-east-2
