@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 1.2.7"
+  required_version = ">= 1.3.0"
   cloud {
     organization = "cklewar"
     hostname     = "app.terraform.io"
