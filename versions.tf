@@ -8,9 +8,9 @@ terraform {
       name = "aws-subnets-module"
     }
   }
-
+  
   required_providers {
     local = ">= 2.2.3"
-    null  = ">= 3.1.1"
+    null = ">= 3.1.1"
   }
 }

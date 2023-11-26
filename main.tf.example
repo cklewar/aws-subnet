@@ -15,22 +15,31 @@ variable "owner" {
   default = "c.klewar@f5.com"
 }
 
+variable "aws_region" {
+  type    = string
+  default = "us-west-2"
+}
+
+provider "aws" {
+  region = "us-west-2"
+  alias  = "default"
+}
+
 module "aws_vpc" {
   source             = "./modules/aws/vpc"
   aws_owner          = var.owner
-  aws_region         = "us-east-2"
-  aws_az_name        = "us-east-2a"
+  aws_region         = var.aws_region
+  aws_az_name        = format("%sa", var.aws_region)
   aws_vpc_name       = format("%s-aws-vpc-%s", var.project_prefix, var.project_suffix)
   aws_vpc_cidr_block = "172.16.40.0/21"
   custom_tags        = {
     Name = format("%s-aws-vpc-%s", var.project_prefix, var.project_suffix)
   }
+  providers = {
+    aws = aws.default
+  }
 }
 
-provider "aws" {
-  region = "us-east-2"
-  alias  = "us-east-2"
-}
 
 module "aws_subnet" {
   source          = "./modules/aws/subnet"
@@ -38,9 +47,10 @@ module "aws_subnet" {
   aws_vpc_subnets = [
     {
       name                    = format("%s-aws-subnet-a-%s", var.project_prefix, var.project_suffix)
-      map_public_ip_on_launch = true
+      owner                   = var.owner
       cidr_block              = "172.16.40.0/24"
-      availability_zone       = "us-east-2a"
+      availability_zone       = format("%sa", var.aws_region)
+      map_public_ip_on_launch = true
       custom_tags             = {
         name  = format("%s-aws-subnet-a-%s", var.project_prefix, var.project_suffix)
         owner = var.owner
@@ -48,18 +58,18 @@ module "aws_subnet" {
     },
     {
       name                    = format("%s-aws-subnet-b-%s", var.project_prefix, var.project_suffix)
-      map_public_ip_on_launch = true
+      owner                   = var.owner
       cidr_block              = "172.16.41.0/24"
-      availability_zone       = "us-east-2a"
+      availability_zone       = format("%sa", var.aws_region)
+      map_public_ip_on_launch = true
       custom_tags             = {
         name  = format("%s-aws-subnet-b-%s", var.project_prefix, var.project_suffix)
         owner = var.owner
       }
     }
   ]
-
   providers = {
-    aws = aws.us-east-2
+    aws = aws.default
   }
 }
 
